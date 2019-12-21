@@ -95,7 +95,10 @@ public abstract class IntrospectedTable {
         ATTR_MYBATIS3_UPDATE_BY_EXAMPLE_WHERE_CLAUSE_ID,
         ATTR_MYBATIS3_SQL_PROVIDER_TYPE,
         ATTR_MYBATIS_DYNAMIC_SQL_SUPPORT_TYPE,
-        ATTR_KOTLIN_RECORD_TYPE
+        ATTR_KOTLIN_RECORD_TYPE,
+        ATTR_SELECT_EXAMPLE_CURSOR, // 游标
+        ATTR_SELECT_EXAMPLE_WITH_BLOBS_CURSOR, // 游标
+
     }
 
     protected TableConfiguration tableConfiguration;
@@ -430,6 +433,9 @@ public abstract class IntrospectedTable {
         setBaseColumnListId("Base_Column_List"); //$NON-NLS-1$
         setBlobColumnListId("Blob_Column_List"); //$NON-NLS-1$
         setMyBatis3UpdateByExampleWhereClauseId("Update_By_Example_Where_Clause"); //$NON-NLS-1$
+
+        setSelectAllCursor("selectCursorByExample");
+        setSelectAllCursorBlobs("selectCursorByExampleWithBLOBs");
     }
 
     public void setBlobColumnListId(String s) {
@@ -542,6 +548,17 @@ public abstract class IntrospectedTable {
                 InternalAttribute.ATTR_COUNT_BY_EXAMPLE_STATEMENT_ID, s);
     }
 
+    public void setSelectAllCursor(String s) {
+        internalAttributes.put(
+                InternalAttribute.ATTR_SELECT_EXAMPLE_CURSOR, s);
+    }
+
+    public void setSelectAllCursorBlobs(String s) {
+        internalAttributes.put(
+                InternalAttribute.ATTR_SELECT_EXAMPLE_WITH_BLOBS_CURSOR, s);
+    }
+
+
     public String getBlobColumnListId() {
         return internalAttributes
                 .get(InternalAttribute.ATTR_BLOB_COLUMN_LIST_ID);
@@ -645,6 +662,16 @@ public abstract class IntrospectedTable {
     public String getCountByExampleStatementId() {
         return internalAttributes
                 .get(InternalAttribute.ATTR_COUNT_BY_EXAMPLE_STATEMENT_ID);
+    }
+
+    public String getSelectAllCursor() {
+        return internalAttributes.get(
+                InternalAttribute.ATTR_SELECT_EXAMPLE_CURSOR);
+    }
+
+    public String getSelectAllCursorBlobs() {
+        return internalAttributes.get(
+                InternalAttribute.ATTR_SELECT_EXAMPLE_WITH_BLOBS_CURSOR);
     }
 
     private boolean isSubPackagesEnabled(PropertyHolder propertyHolder) {

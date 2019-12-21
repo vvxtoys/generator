@@ -41,6 +41,8 @@ public class FullyQualifiedJavaType implements
 
     private static FullyQualifiedJavaType generatedCriteriaInstance = null;
 
+    private static FullyQualifiedJavaType cursorInsance = null;
+
     /** The short name without any generic arguments. */
     private String baseShortName;
 
@@ -323,6 +325,11 @@ public class FullyQualifiedJavaType implements
         }
 
         return generatedCriteriaInstance;
+    }
+
+    public static final FullyQualifiedJavaType getNewCursorInstance() {
+        // always return a new instance because the type may be parameterized
+        return new FullyQualifiedJavaType("org.apache.ibatis.cursor.Cursor"); //$NON-NLS-1$
     }
 
     @Override
