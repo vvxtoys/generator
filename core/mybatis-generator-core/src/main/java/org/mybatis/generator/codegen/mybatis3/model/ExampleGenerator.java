@@ -37,8 +37,12 @@ import org.mybatis.generator.api.dom.java.Parameter;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
 import org.mybatis.generator.codegen.AbstractJavaGenerator;
 import org.mybatis.generator.codegen.mybatis3.MyBatis3FormattingUtilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ExampleGenerator extends AbstractJavaGenerator {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExampleGenerator.class);
 
     public ExampleGenerator(String project) {
         super(project);
@@ -656,9 +660,16 @@ public class ExampleGenerator extends AbstractJavaGenerator {
             answer.addMethod(getSetLessThanMethod(introspectedColumn));
             answer.addMethod(getSetLessThanOrEqualMethod(introspectedColumn));
 
+
             if (introspectedColumn.isJdbcCharacterColumn()) {
                 answer.addMethod(getSetLikeMethod(introspectedColumn));
                 answer.addMethod(getSetNotLikeMethod(introspectedColumn));
+            }
+
+            if (introspectedColumn.isJdbcNumberColumn()) {
+                LOGGER.info("type = " + introspectedColumn.getJdbcTypeName());
+                answer.addMethod(getSetNumberLikeMethod(introspectedColumn));
+                answer.addMethod(getSetNumberNotLikeMethod(introspectedColumn));
             }
 
             answer.addMethod(getSetInOrNotInMethod(introspectedColumn, true));
@@ -716,9 +727,21 @@ public class ExampleGenerator extends AbstractJavaGenerator {
         return getSingleValueMethod(introspectedColumn, "NotLike", "not like"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
+    private Method getSetNumberLikeMethod(IntrospectedColumn introspectedColumn) {
+        return getSingleValueMethod(introspectedColumn, "Like", "like",true); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    private Method getSetNumberNotLikeMethod(IntrospectedColumn introspectedColumn) {
+        return getSingleValueMethod(introspectedColumn, "NotLike", "not like",true); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
     private Method getSingleValueMethod(IntrospectedColumn introspectedColumn,
-            String nameFragment, String operator) {
-        
+                                        String nameFragment, String operator) {
+        return getSingleValueMethod(introspectedColumn, nameFragment, operator, false);
+    }
+
+    private Method getSingleValueMethod(IntrospectedColumn introspectedColumn,
+            String nameFragment, String operator, boolean isNumber) {
         StringBuilder sb = new StringBuilder();
         sb.append(introspectedColumn.getJavaProperty());
         sb.setCharAt(0, Character.toUpperCase(sb.charAt(0)));
@@ -745,13 +768,17 @@ public class ExampleGenerator extends AbstractJavaGenerator {
         } else {
             sb.append("addCriterion(\""); //$NON-NLS-1$
         }
-
         sb.append(MyBatis3FormattingUtilities
                 .getAliasedActualColumnName(introspectedColumn));
         sb.append(' ');
         sb.append(operator);
         sb.append("\", "); //$NON-NLS-1$
-        sb.append("value"); //$NON-NLS-1$
+        if (isNumber) {
+            sb.append("String.valueOf(value)"); //$NON-NLS-1$
+            LOGGER.info("添加Long like方法");
+        }else {
+            sb.append("value"); //$NON-NLS-1$
+        }
         sb.append(", \""); //$NON-NLS-1$
         sb.append(introspectedColumn.getJavaProperty());
         sb.append("\");"); //$NON-NLS-1$
