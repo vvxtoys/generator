@@ -40,6 +40,7 @@ import org.mybatis.generator.codegen.mybatis3.MyBatis3FormattingUtilities;
 
 public class ExampleGenerator extends AbstractJavaGenerator {
 
+
     public ExampleGenerator(String project) {
         super(project);
     }
@@ -661,6 +662,11 @@ public class ExampleGenerator extends AbstractJavaGenerator {
                 answer.addMethod(getSetNotLikeMethod(introspectedColumn));
             }
 
+            if (introspectedColumn.isJdbcNumberColumn()) {
+                answer.addMethod(getSetNumberLikeMethod(introspectedColumn));
+                answer.addMethod(getSetNumberNotLikeMethod(introspectedColumn));
+            }
+
             answer.addMethod(getSetInOrNotInMethod(introspectedColumn, true));
             answer.addMethod(getSetInOrNotInMethod(introspectedColumn, false));
             answer.addMethod(getSetBetweenOrNotBetweenMethod(
@@ -716,9 +722,27 @@ public class ExampleGenerator extends AbstractJavaGenerator {
         return getSingleValueMethod(introspectedColumn, "NotLike", "not like"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
+<<<<<<< HEAD
     private Method getSingleValueMethod(IntrospectedColumn introspectedColumn,
             String nameFragment, String operator) {
         
+=======
+    private Method getSetNumberLikeMethod(IntrospectedColumn introspectedColumn) {
+        return getSingleValueMethod(introspectedColumn, "Like", "like",true); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    private Method getSetNumberNotLikeMethod(IntrospectedColumn introspectedColumn) {
+        return getSingleValueMethod(introspectedColumn, "NotLike", "not like",true); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    private Method getSingleValueMethod(IntrospectedColumn introspectedColumn,
+                                        String nameFragment, String operator) {
+        return getSingleValueMethod(introspectedColumn, nameFragment, operator, false);
+    }
+
+    private Method getSingleValueMethod(IntrospectedColumn introspectedColumn,
+            String nameFragment, String operator, boolean isNumber) {
+>>>>>>> a479f98044cd6612ced78b22da912be498891d7b
         StringBuilder sb = new StringBuilder();
         sb.append(introspectedColumn.getJavaProperty());
         sb.setCharAt(0, Character.toUpperCase(sb.charAt(0)));
@@ -745,13 +769,16 @@ public class ExampleGenerator extends AbstractJavaGenerator {
         } else {
             sb.append("addCriterion(\""); //$NON-NLS-1$
         }
-
         sb.append(MyBatis3FormattingUtilities
                 .getAliasedActualColumnName(introspectedColumn));
         sb.append(' ');
         sb.append(operator);
         sb.append("\", "); //$NON-NLS-1$
-        sb.append("value"); //$NON-NLS-1$
+        if (isNumber) {
+            sb.append("String.valueOf(value)"); //$NON-NLS-1$
+        }else {
+            sb.append("value"); //$NON-NLS-1$
+        }
         sb.append(", \""); //$NON-NLS-1$
         sb.append(introspectedColumn.getJavaProperty());
         sb.append("\");"); //$NON-NLS-1$

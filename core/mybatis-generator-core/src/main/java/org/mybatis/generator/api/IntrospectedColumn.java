@@ -185,6 +185,12 @@ public class IntrospectedColumn {
                 || jdbcType == Types.NCLOB || jdbcType == Types.NVARCHAR;
     }
 
+
+    public boolean isJdbcNumberColumn() {
+        return jdbcType == Types.TINYINT || jdbcType == Types.INTEGER
+                || jdbcType == Types.BIGINT || jdbcType == Types.SMALLINT;
+    }
+
     public String getJavaProperty() {
         return getJavaProperty(null);
     }
