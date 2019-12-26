@@ -768,7 +768,7 @@ public class ExampleGenerator extends AbstractJavaGenerator {
         sb.append(operator);
         sb.append("\", "); //$NON-NLS-1$
         if (isNumber) {
-            sb.append("\"%\"+String.valueOf(value)+\"%\""); //$NON-NLS-1$
+            sb.append("\"%\" + value + \"%\""); //$NON-NLS-1$
         }else {
             sb.append("value"); //$NON-NLS-1$
         }
