@@ -187,7 +187,9 @@ public class IntrospectedColumn {
 
     public boolean isJdbcNumberColumn() {
         return jdbcType == Types.TINYINT || jdbcType == Types.INTEGER
-                || jdbcType == Types.BIGINT || jdbcType == Types.SMALLINT;
+                || jdbcType == Types.BIGINT || jdbcType == Types.SMALLINT
+                || jdbcType == Types.DECIMAL || jdbcType == Types.FLOAT
+                || jdbcType == Types.DOUBLE || jdbcType == Types.NUMERIC;
     }
 
     public String getJavaProperty() {

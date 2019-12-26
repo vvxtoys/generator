@@ -37,12 +37,8 @@ import org.mybatis.generator.api.dom.java.Parameter;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
 import org.mybatis.generator.codegen.AbstractJavaGenerator;
 import org.mybatis.generator.codegen.mybatis3.MyBatis3FormattingUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ExampleGenerator extends AbstractJavaGenerator {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExampleGenerator.class);
 
     public ExampleGenerator(String project) {
         super(project);
@@ -667,7 +663,6 @@ public class ExampleGenerator extends AbstractJavaGenerator {
             }
 
             if (introspectedColumn.isJdbcNumberColumn()) {
-                LOGGER.info("type = " + introspectedColumn.getJdbcTypeName());
                 answer.addMethod(getSetNumberLikeMethod(introspectedColumn));
                 answer.addMethod(getSetNumberNotLikeMethod(introspectedColumn));
             }
@@ -774,8 +769,7 @@ public class ExampleGenerator extends AbstractJavaGenerator {
         sb.append(operator);
         sb.append("\", "); //$NON-NLS-1$
         if (isNumber) {
-            sb.append("String.valueOf(value)"); //$NON-NLS-1$
-            LOGGER.info("添加Long like方法");
+            sb.append("\"%\"+String.valueOf(value)+\"%\""); //$NON-NLS-1$
         }else {
             sb.append("value"); //$NON-NLS-1$
         }

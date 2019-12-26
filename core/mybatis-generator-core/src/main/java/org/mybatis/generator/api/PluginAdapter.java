@@ -366,6 +366,7 @@ public abstract class PluginAdapter implements Plugin {
     @Override
     public boolean sqlMapGenerated(GeneratedXmlFile sqlMap,
             IntrospectedTable introspectedTable) {
+            sqlMap.setMergeable(false);
         return true;
     }
 
