@@ -656,7 +656,6 @@ public class ExampleGenerator extends AbstractJavaGenerator {
             answer.addMethod(getSetLessThanMethod(introspectedColumn));
             answer.addMethod(getSetLessThanOrEqualMethod(introspectedColumn));
 
-
             if (introspectedColumn.isJdbcCharacterColumn()) {
                 answer.addMethod(getSetLikeMethod(introspectedColumn));
                 answer.addMethod(getSetNotLikeMethod(introspectedColumn));
