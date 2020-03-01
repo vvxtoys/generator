@@ -15,12 +15,12 @@
  */
 package org.mybatis.generator.api.dom.java;
 
-import static org.mybatis.generator.internal.util.StringUtility.stringHasValue;
-import static org.mybatis.generator.internal.util.messages.Messages.getString;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+
+import static org.mybatis.generator.internal.util.StringUtility.stringHasValue;
+import static org.mybatis.generator.internal.util.messages.Messages.getString;
 
 public class FullyQualifiedJavaType implements
         Comparable<FullyQualifiedJavaType> {
@@ -41,7 +41,13 @@ public class FullyQualifiedJavaType implements
 
     private static FullyQualifiedJavaType generatedCriteriaInstance = null;
 
-    private static FullyQualifiedJavaType cursorInsance = null;
+    private static FullyQualifiedJavaType cursorInstance = null;
+
+    private static FullyQualifiedJavaType associationCriteriaInstance = null;
+
+    private static FullyQualifiedJavaType generatedAssociationCriteriaInstance = null;
+
+    public static FullyQualifiedJavaType genericInstance = null;
 
     /** The short name without any generic arguments. */
     private String baseShortName;
@@ -327,9 +333,36 @@ public class FullyQualifiedJavaType implements
         return generatedCriteriaInstance;
     }
 
+    public static final FullyQualifiedJavaType getNewAssociationCriteriaInstance() {
+        // always return a new instance because the type may be parameterized
+        if (associationCriteriaInstance == null) {
+            associationCriteriaInstance = new FullyQualifiedJavaType("AssociationCriteria"); //$NON-NLS-1$
+        }
+        return associationCriteriaInstance;
+    }
+
+    public static final FullyQualifiedJavaType getNewGeneratedAssociationCriteriaInstance() {
+        // always return a new instance because the type may be parameterized
+        if (generatedAssociationCriteriaInstance == null) {
+            generatedAssociationCriteriaInstance = new FullyQualifiedJavaType("GeneratedAssociationCriteria"); //$NON-NLS-1$
+        }
+        return generatedAssociationCriteriaInstance;
+    }
+
     public static final FullyQualifiedJavaType getNewCursorInstance() {
         // always return a new instance because the type may be parameterized
-        return new FullyQualifiedJavaType("org.apache.ibatis.cursor.Cursor"); //$NON-NLS-1$
+        if (cursorInstance == null) {
+            cursorInstance = new FullyQualifiedJavaType("org.apache.ibatis.cursor.Cursor"); //$NON-NLS-1$
+        }
+        return cursorInstance;
+    }
+
+    public static final FullyQualifiedJavaType getNewGenericInstance() {
+        // always return a new instance because the type may be parameterized
+        if (genericInstance == null) {
+            genericInstance = new FullyQualifiedJavaType("T"); //$NON-NLS-1$
+        }
+        return genericInstance;
     }
 
     @Override

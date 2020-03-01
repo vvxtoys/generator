@@ -15,10 +15,11 @@
  */
 package org.mybatis.generator.codegen.mybatis3;
 
+import com.mysql.jdbc.StringUtils;
+import org.mybatis.generator.api.IntrospectedColumn;
+
 import static org.mybatis.generator.internal.util.StringUtility.escapeStringForJava;
 import static org.mybatis.generator.internal.util.StringUtility.stringHasValue;
-
-import org.mybatis.generator.api.IntrospectedColumn;
 
 public class MyBatis3FormattingUtilities {
 
@@ -60,6 +61,11 @@ public class MyBatis3FormattingUtilities {
      */
     public static String getSelectListPhrase(
             IntrospectedColumn introspectedColumn) {
+        return getSelectListPhrase(introspectedColumn, null);
+    }
+
+    public static String getSelectListPhrase(
+            IntrospectedColumn introspectedColumn, String tableName) {
         if (stringHasValue(introspectedColumn.getTableAlias())) {
             StringBuilder sb = new StringBuilder();
 
@@ -76,6 +82,8 @@ public class MyBatis3FormattingUtilities {
                 sb.append(introspectedColumn.getContext().getEndingDelimiter());
             }
             return sb.toString();
+        } else if (!StringUtils.isNullOrEmpty(tableName)) {
+            return tableName.concat(".").concat(getEscapedColumnName(introspectedColumn));
         } else {
             return getEscapedColumnName(introspectedColumn);
         }
@@ -123,10 +131,20 @@ public class MyBatis3FormattingUtilities {
      */
     public static String getAliasedActualColumnName(
             IntrospectedColumn introspectedColumn) {
+        return getAliasedActualColumnName(introspectedColumn,null);
+    }
+
+    public static String getAliasedActualColumnName(
+            IntrospectedColumn introspectedColumn, String tableName) {
         StringBuilder sb = new StringBuilder();
         if (stringHasValue(introspectedColumn.getTableAlias())) {
             sb.append(introspectedColumn.getTableAlias());
             sb.append('.');
+        }
+
+        if (!StringUtils.isNullOrEmpty(tableName) && StringUtils.isNullOrEmpty(sb.toString())) {
+            sb.append(tableName);
+            sb.append(".");
         }
 
         if (introspectedColumn.isColumnNameDelimited()) {

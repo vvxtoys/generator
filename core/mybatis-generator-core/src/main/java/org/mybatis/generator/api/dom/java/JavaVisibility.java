@@ -24,7 +24,8 @@ public enum JavaVisibility {
     PUBLIC("public "), //$NON-NLS-1$
     PRIVATE("private "), //$NON-NLS-1$
     PROTECTED("protected "), //$NON-NLS-1$
-    DEFAULT(""); //$NON-NLS-1$
+    DEFAULT(""), //$NON-NLS-1$
+    PUBLIC_GENERIC("public <T> ");
 
     private String value;
 

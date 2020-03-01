@@ -55,9 +55,16 @@ public class CursorBlobsXmlElementGenerator extends
             answer.addElement(new TextElement(sb.toString()));
         }
 
-        answer.addElement(getBaseColumnListElement());
-        answer.addElement(new TextElement(",")); //$NON-NLS-1$
-        answer.addElement(getBlobColumnListElement());
+        XmlElement chooseElement = new XmlElement("choose");
+        XmlElement whenElement = new XmlElement("when");
+        whenElement.addAttribute(new Attribute("test", "dynamicFields != null")); //$NON-NLS-1$ //$NON-NLS-2$
+        whenElement.addElement(new TextElement("${dynamicFields}")); //$NON-NLS-1$
+        chooseElement.addElement(whenElement);
+        XmlElement otherElement = new XmlElement("otherwise");
+        otherElement.addElement(getBaseColumnListElement());
+        otherElement.addElement(new TextElement(",")); //$NON-NLS-1$
+        otherElement.addElement(getBlobColumnListElement());
+        answer.addElement(chooseElement);
 
         sb.setLength(0);
         sb.append("from "); //$NON-NLS-1$
@@ -65,6 +72,11 @@ public class CursorBlobsXmlElementGenerator extends
                 .getAliasedFullyQualifiedTableNameAtRuntime());
         answer.addElement(new TextElement(sb.toString()));
         answer.addElement(getExampleIncludeElement());
+
+        ifElement = new XmlElement("if"); //$NON-NLS-1$
+        ifElement.addAttribute(new Attribute("test", "groupByClause != null")); //$NON-NLS-1$ //$NON-NLS-2$
+        ifElement.addElement(new TextElement("group by ${groupByClause}")); //$NON-NLS-1$
+        answer.addElement(ifElement);
 
         ifElement = new XmlElement("if"); //$NON-NLS-1$
         ifElement.addAttribute(new Attribute("test", "orderByClause != null")); //$NON-NLS-1$ //$NON-NLS-2$

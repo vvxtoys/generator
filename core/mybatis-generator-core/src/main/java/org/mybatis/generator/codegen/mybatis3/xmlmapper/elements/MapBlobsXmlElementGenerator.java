@@ -15,18 +15,17 @@
  */
 package org.mybatis.generator.codegen.mybatis3.xmlmapper.elements;
 
+import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.api.dom.xml.Attribute;
 import org.mybatis.generator.api.dom.xml.TextElement;
 import org.mybatis.generator.api.dom.xml.XmlElement;
 
 import static org.mybatis.generator.internal.util.StringUtility.stringHasValue;
 
-public class SelectByExampleWithBLOBsElementGenerator extends
+public class MapBlobsXmlElementGenerator extends
         AbstractXmlElementGenerator {
 
-    public SelectByExampleWithBLOBsElementGenerator() {
-        super();
-    }
+    public MapBlobsXmlElementGenerator() {super();}
 
     @Override
     public void addElements(XmlElement parentElement) {
@@ -35,9 +34,9 @@ public class SelectByExampleWithBLOBsElementGenerator extends
         XmlElement answer = new XmlElement("select"); //$NON-NLS-1$
         answer
                 .addAttribute(new Attribute(
-                        "id", introspectedTable.getSelectByExampleWithBLOBsStatementId())); //$NON-NLS-1$
+                        "id", introspectedTable.getSelectBlobsMap())); //$NON-NLS-1$
         answer.addAttribute(new Attribute(
-                "resultMap", introspectedTable.getResultMapWithBLOBsId())); //$NON-NLS-1$
+                "resultType", FullyQualifiedJavaType.getNewMapInstance().getShortName())); //$NON-NLS-1$
         answer.addAttribute(new Attribute("parameterType", fqjt)); //$NON-NLS-1$
 
         context.getCommentGenerator().addComment(answer);

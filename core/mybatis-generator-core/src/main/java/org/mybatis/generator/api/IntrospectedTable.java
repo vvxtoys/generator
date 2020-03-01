@@ -15,34 +15,19 @@
  */
 package org.mybatis.generator.api;
 
-import static org.mybatis.generator.internal.util.StringUtility.isTrue;
-import static org.mybatis.generator.internal.util.StringUtility.stringHasValue;
-
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.mybatis.generator.config.Context;
-import org.mybatis.generator.config.GeneratedKey;
-import org.mybatis.generator.config.JavaClientGeneratorConfiguration;
-import org.mybatis.generator.config.JavaModelGeneratorConfiguration;
-import org.mybatis.generator.config.ModelType;
-import org.mybatis.generator.config.PropertyHolder;
-import org.mybatis.generator.config.PropertyRegistry;
-import org.mybatis.generator.config.SqlMapGeneratorConfiguration;
-import org.mybatis.generator.config.TableConfiguration;
+import org.mybatis.generator.config.*;
 import org.mybatis.generator.internal.rules.ConditionalModelRules;
 import org.mybatis.generator.internal.rules.FlatModelRules;
 import org.mybatis.generator.internal.rules.HierarchicalModelRules;
 import org.mybatis.generator.internal.rules.Rules;
+
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.mybatis.generator.internal.util.StringUtility.isTrue;
+import static org.mybatis.generator.internal.util.StringUtility.stringHasValue;
 
 /**
  * Base class for all code generator implementations. This class provides many
@@ -98,7 +83,9 @@ public abstract class IntrospectedTable {
         ATTR_KOTLIN_RECORD_TYPE,
         ATTR_SELECT_EXAMPLE_CURSOR, // 游标
         ATTR_SELECT_EXAMPLE_WITH_BLOBS_CURSOR, // 游标
-
+        ATTR_ASSOCIATE_EXAMPLE_CLAUSE, // 多表查询
+        ATTR_SELECT_EXAMPLE_MAP, // 返回map
+        ATTR_SELECT_EXAMPLE_BLOBS_MAP
     }
 
     protected TableConfiguration tableConfiguration;
@@ -430,12 +417,14 @@ public abstract class IntrospectedTable {
         setBaseResultMapId("BaseResultMap"); //$NON-NLS-1$
         setResultMapWithBLOBsId("ResultMapWithBLOBs"); //$NON-NLS-1$
         setExampleWhereClauseId("Example_Where_Clause"); //$NON-NLS-1$
+        setAssociateClause("Example_Association_Clause");
         setBaseColumnListId("Base_Column_List"); //$NON-NLS-1$
         setBlobColumnListId("Blob_Column_List"); //$NON-NLS-1$
         setMyBatis3UpdateByExampleWhereClauseId("Update_By_Example_Where_Clause"); //$NON-NLS-1$
-
         setSelectAllCursor("selectCursorByExample");
         setSelectAllCursorBlobs("selectCursorByExampleWithBLOBs");
+        setSelectToMap("selectMapByExample");
+        setSelectToBlobsMap("selectMapByExampleWithBlobs");
     }
 
     public void setBlobColumnListId(String s) {
@@ -558,6 +547,18 @@ public abstract class IntrospectedTable {
                 InternalAttribute.ATTR_SELECT_EXAMPLE_WITH_BLOBS_CURSOR, s);
     }
 
+    public void setAssociateClause(String s) {
+        internalAttributes.put(InternalAttribute.ATTR_ASSOCIATE_EXAMPLE_CLAUSE,s);
+    }
+
+    public void setSelectToMap(String s) {
+        internalAttributes.put(InternalAttribute.ATTR_SELECT_EXAMPLE_MAP,s);
+    }
+
+    public void setSelectToBlobsMap(String s) {
+        internalAttributes.put(InternalAttribute.ATTR_SELECT_EXAMPLE_BLOBS_MAP,s);
+    }
+
 
     public String getBlobColumnListId() {
         return internalAttributes
@@ -672,6 +673,21 @@ public abstract class IntrospectedTable {
     public String getSelectAllCursorBlobs() {
         return internalAttributes.get(
                 InternalAttribute.ATTR_SELECT_EXAMPLE_WITH_BLOBS_CURSOR);
+    }
+
+    public String getSelectMap() {
+        return internalAttributes.get(
+                InternalAttribute.ATTR_SELECT_EXAMPLE_MAP);
+    }
+
+    public String getSelectBlobsMap() {
+        return internalAttributes.get(
+                InternalAttribute.ATTR_SELECT_EXAMPLE_BLOBS_MAP);
+    }
+
+    public String getSelectAssociate() {
+        return internalAttributes.get(
+                InternalAttribute.ATTR_ASSOCIATE_EXAMPLE_CLAUSE);
     }
 
     private boolean isSubPackagesEnabled(PropertyHolder propertyHolder) {

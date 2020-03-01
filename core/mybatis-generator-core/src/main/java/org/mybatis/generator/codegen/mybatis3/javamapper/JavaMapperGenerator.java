@@ -15,13 +15,7 @@
  */
 package org.mybatis.generator.codegen.mybatis3.javamapper;
 
-import static org.mybatis.generator.internal.util.StringUtility.stringHasValue;
-import static org.mybatis.generator.internal.util.messages.Messages.getString;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
+import com.mysql.jdbc.StringUtils;
 import org.mybatis.generator.api.CommentGenerator;
 import org.mybatis.generator.api.dom.java.CompilationUnit;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
@@ -32,6 +26,13 @@ import org.mybatis.generator.codegen.AbstractXmlGenerator;
 import org.mybatis.generator.codegen.mybatis3.javamapper.elements.*;
 import org.mybatis.generator.codegen.mybatis3.xmlmapper.XMLMapperGenerator;
 import org.mybatis.generator.config.PropertyRegistry;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static org.mybatis.generator.internal.util.StringUtility.stringHasValue;
+import static org.mybatis.generator.internal.util.messages.Messages.getString;
 
 public class JavaMapperGenerator extends AbstractJavaClientGenerator {
 
@@ -83,8 +84,15 @@ public class JavaMapperGenerator extends AbstractJavaClientGenerator {
         addUpdateByPrimaryKeySelectiveMethod(interfaze);
         addUpdateByPrimaryKeyWithBLOBsMethod(interfaze);
         addUpdateByPrimaryKeyWithoutBLOBsMethod(interfaze);
-        addSelectCursorBlobsMethod(interfaze);
-        addSelectCursorMethod(interfaze);
+
+        String cursor = introspectedTable.getTableConfiguration().getProperty(PropertyRegistry.TABLE_ENABLE_CURSOR);
+        if (!StringUtils.isNullOrEmpty(cursor) && Boolean.parseBoolean(cursor)) {
+            addSelectCursorBlobsMethod(interfaze);
+            addSelectCursorMethod(interfaze);
+        }
+        addSelectMapMethod(interfaze);
+        addSelectMapBlobsMethod(interfaze);
+
 
         List<CompilationUnit> answer = new ArrayList<>();
         if (context.getPlugins().clientGenerated(interfaze, introspectedTable)) {
@@ -208,6 +216,20 @@ public class JavaMapperGenerator extends AbstractJavaClientGenerator {
     protected void addSelectCursorMethod(Interface interfaze) {
         if (introspectedTable.getRules().generateSelectByExampleWithoutBLOBs()) {
             AbstractJavaMapperMethodGenerator methodGenerator = new CursorSelectAllMethodGenerator();
+            initializeAndExecuteGenerator(methodGenerator, interfaze);
+        }
+    }
+
+    protected void addSelectMapBlobsMethod(Interface interfaze) {
+        if (introspectedTable.getRules().generateSelectByExampleWithBLOBs()) {
+            AbstractJavaMapperMethodGenerator methodGenerator = new MapSelectAllBlobsMethodGenerator();
+            initializeAndExecuteGenerator(methodGenerator, interfaze);
+        }
+    }
+
+    protected void addSelectMapMethod(Interface interfaze) {
+        if (introspectedTable.getRules().generateSelectByExampleWithoutBLOBs()) {
+            AbstractJavaMapperMethodGenerator methodGenerator = new MapSelectAllMethodGenerator();
             initializeAndExecuteGenerator(methodGenerator, interfaze);
         }
     }

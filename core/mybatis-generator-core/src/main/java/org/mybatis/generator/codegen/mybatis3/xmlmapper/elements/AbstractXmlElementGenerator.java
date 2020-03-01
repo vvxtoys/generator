@@ -15,12 +15,14 @@
  */
 package org.mybatis.generator.codegen.mybatis3.xmlmapper.elements;
 
+import com.mysql.jdbc.StringUtils;
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.dom.xml.Attribute;
 import org.mybatis.generator.api.dom.xml.TextElement;
 import org.mybatis.generator.api.dom.xml.XmlElement;
 import org.mybatis.generator.codegen.AbstractGenerator;
 import org.mybatis.generator.config.GeneratedKey;
+import org.mybatis.generator.config.PropertyRegistry;
 
 public abstract class AbstractXmlElementGenerator extends AbstractGenerator {
     public abstract void addElements(XmlElement parentElement);
@@ -74,7 +76,13 @@ public abstract class AbstractXmlElementGenerator extends AbstractGenerator {
     protected XmlElement getExampleIncludeElement() {
         XmlElement ifElement = new XmlElement("if"); //$NON-NLS-1$
         ifElement.addAttribute(new Attribute("test", "_parameter != null")); //$NON-NLS-1$ //$NON-NLS-2$
-
+        String associate = introspectedTable.getTableConfiguration().getProperty(PropertyRegistry.TABLE_ASSOCIATE);
+        if (!StringUtils.isNullOrEmpty(associate) && Boolean.parseBoolean(associate)) {
+            XmlElement includeElement = new XmlElement("include"); //$NON-NLS-1$
+            includeElement.addAttribute(new Attribute("refid", //$NON-NLS-1$
+                    introspectedTable.getSelectAssociate()));
+            ifElement.addElement(includeElement);
+        }
         XmlElement includeElement = new XmlElement("include"); //$NON-NLS-1$
         includeElement.addAttribute(new Attribute("refid", //$NON-NLS-1$
                 introspectedTable.getExampleWhereClauseId()));

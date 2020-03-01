@@ -15,8 +15,7 @@
  */
 package org.mybatis.generator.codegen.mybatis3.xmlmapper;
 
-import static org.mybatis.generator.internal.util.messages.Messages.getString;
-
+import com.mysql.jdbc.StringUtils;
 import org.mybatis.generator.api.FullyQualifiedTable;
 import org.mybatis.generator.api.dom.xml.Attribute;
 import org.mybatis.generator.api.dom.xml.Document;
@@ -24,6 +23,9 @@ import org.mybatis.generator.api.dom.xml.XmlElement;
 import org.mybatis.generator.codegen.AbstractXmlGenerator;
 import org.mybatis.generator.codegen.XmlConstants;
 import org.mybatis.generator.codegen.mybatis3.xmlmapper.elements.*;
+import org.mybatis.generator.config.PropertyRegistry;
+
+import static org.mybatis.generator.internal.util.messages.Messages.getString;
 
 public class XMLMapperGenerator extends AbstractXmlGenerator {
 
@@ -45,6 +47,7 @@ public class XMLMapperGenerator extends AbstractXmlGenerator {
         addResultMapWithoutBLOBsElement(answer);
         addResultMapWithBLOBsElement(answer);
         addExampleWhereClauseElement(answer);
+        addExampleAssociateClauseElement(answer);
         addMyBatis3UpdateByExampleWhereClauseElement(answer);
         addBaseColumnListElement(answer);
         addBlobColumnListElement(answer);
@@ -62,8 +65,16 @@ public class XMLMapperGenerator extends AbstractXmlGenerator {
         addUpdateByPrimaryKeySelectiveElement(answer);
         addUpdateByPrimaryKeyWithBLOBsElement(answer);
         addUpdateByPrimaryKeyWithoutBLOBsElement(answer);
-        addSelectAllCursor(answer);
-        addSelectAllBlobsCursor(answer);
+        // 是否开启cursor功能
+        String cursor = introspectedTable.getTableConfiguration().getProperty(PropertyRegistry.TABLE_ENABLE_CURSOR);
+        if (!StringUtils.isNullOrEmpty(cursor) && Boolean.valueOf(cursor)) {
+            addSelectAllCursor(answer);
+            addSelectAllBlobsCursor(answer);
+        }
+        // 添加map方法
+        addSelectAllMap(answer);
+        addSelectAllBlobsMap(answer);
+
 
         return answer;
     }
@@ -86,6 +97,14 @@ public class XMLMapperGenerator extends AbstractXmlGenerator {
         if (introspectedTable.getRules().generateSQLExampleWhereClause()) {
             AbstractXmlElementGenerator elementGenerator = new ExampleWhereClauseElementGenerator(
                     false);
+            initializeAndExecuteGenerator(elementGenerator, parentElement);
+        }
+    }
+
+    protected void addExampleAssociateClauseElement(XmlElement parentElement) {
+        String associate = introspectedTable.getTableConfiguration().getProperty(PropertyRegistry.TABLE_ASSOCIATE);
+        if (!StringUtils.isNullOrEmpty(associate) && Boolean.parseBoolean(associate)) {
+            AbstractXmlElementGenerator elementGenerator = new AssociateOnClauseElementGenerator();
             initializeAndExecuteGenerator(elementGenerator, parentElement);
         }
     }
@@ -228,6 +247,20 @@ public class XMLMapperGenerator extends AbstractXmlGenerator {
     protected void addSelectAllBlobsCursor(XmlElement parentElement) {
         if (introspectedTable.getRules().generateSelectByExampleWithBLOBs()) {
             AbstractXmlElementGenerator elementGenerator = new CursorBlobsXmlElementGenerator();
+            initializeAndExecuteGenerator(elementGenerator, parentElement);
+        }
+    }
+
+    protected void addSelectAllMap(XmlElement parentElement) {
+        if (introspectedTable.getRules().generateSelectByExampleWithoutBLOBs()) {
+            AbstractXmlElementGenerator elementGenerator = new MapXmlElementGenerator();
+            initializeAndExecuteGenerator(elementGenerator, parentElement);
+        }
+    }
+
+    protected void addSelectAllBlobsMap(XmlElement parentElement) {
+        if (introspectedTable.getRules().generateSelectByExampleWithBLOBs()) {
+            AbstractXmlElementGenerator elementGenerator = new MapBlobsXmlElementGenerator();
             initializeAndExecuteGenerator(elementGenerator, parentElement);
         }
     }

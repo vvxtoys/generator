@@ -15,29 +15,28 @@
  */
 package org.mybatis.generator.codegen.mybatis3.xmlmapper.elements;
 
+import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.api.dom.xml.Attribute;
 import org.mybatis.generator.api.dom.xml.TextElement;
 import org.mybatis.generator.api.dom.xml.XmlElement;
 
 import static org.mybatis.generator.internal.util.StringUtility.stringHasValue;
 
-public class SelectByExampleWithBLOBsElementGenerator extends
-        AbstractXmlElementGenerator {
+public class MapXmlElementGenerator extends
+        AbstractXmlElementGenerator{
 
-    public SelectByExampleWithBLOBsElementGenerator() {
-        super();
-    }
+    public MapXmlElementGenerator() {super();}
 
     @Override
     public void addElements(XmlElement parentElement) {
         String fqjt = introspectedTable.getExampleType();
 
         XmlElement answer = new XmlElement("select"); //$NON-NLS-1$
-        answer
-                .addAttribute(new Attribute(
-                        "id", introspectedTable.getSelectByExampleWithBLOBsStatementId())); //$NON-NLS-1$
+
+        answer.addAttribute(new Attribute("id", //$NON-NLS-1$
+                introspectedTable.getSelectMap()));
         answer.addAttribute(new Attribute(
-                "resultMap", introspectedTable.getResultMapWithBLOBsId())); //$NON-NLS-1$
+                "resultType", FullyQualifiedJavaType.getNewMapInstance().getShortName())); //$NON-NLS-1$
         answer.addAttribute(new Attribute("parameterType", fqjt)); //$NON-NLS-1$
 
         context.getCommentGenerator().addComment(answer);
@@ -64,8 +63,6 @@ public class SelectByExampleWithBLOBsElementGenerator extends
         chooseElement.addElement(whenElement);
         XmlElement otherElement = new XmlElement("otherwise");
         otherElement.addElement(getBaseColumnListElement());
-        otherElement.addElement(new TextElement(",")); //$NON-NLS-1$
-        otherElement.addElement(getBlobColumnListElement());
         answer.addElement(chooseElement);
 
         sb.setLength(0);
@@ -86,7 +83,7 @@ public class SelectByExampleWithBLOBsElementGenerator extends
         answer.addElement(ifElement);
 
         if (context.getPlugins()
-                .sqlMapSelectByExampleWithBLOBsElementGenerated(answer,
+                .sqlMapSelectByExampleWithoutBLOBsElementGenerated(answer,
                         introspectedTable)) {
             parentElement.addElement(answer);
         }
