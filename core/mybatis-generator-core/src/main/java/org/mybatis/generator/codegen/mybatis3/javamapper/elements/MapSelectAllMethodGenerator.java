@@ -1,5 +1,5 @@
 /**
- *    Copyright 2006-2019 the original author or authors.
+ *    Copyright 2006-2020 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@ import org.mybatis.generator.api.dom.java.*;
 
 import java.util.Set;
 import java.util.TreeSet;
-
-import static org.mybatis.generator.internal.util.messages.Messages.getString;
 
 public class MapSelectAllMethodGenerator extends
         AbstractJavaMapperMethodGenerator {
@@ -42,19 +40,9 @@ public class MapSelectAllMethodGenerator extends
         method.setAbstract(true);
 
         FullyQualifiedJavaType returnType = FullyQualifiedJavaType
-                .getNewMapInstance();
-        FullyQualifiedJavaType listType;
-        if (introspectedTable.getRules().generateBaseRecordClass()) {
-            listType = new FullyQualifiedJavaType(introspectedTable
-                    .getBaseRecordType());
-        } else if (introspectedTable.getRules().generatePrimaryKeyClass()) {
-            listType = new FullyQualifiedJavaType(introspectedTable
-                    .getPrimaryKeyType());
-        } else {
-            throw new RuntimeException(getString("RuntimeError.12")); //$NON-NLS-1$
-        }
+                .getNewListInstance();
+        FullyQualifiedJavaType listType = FullyQualifiedJavaType.getNewMapInstance();
 
-        importedTypes.add(listType);
         returnType.addTypeArgument(listType);
         method.setReturnType(returnType);
 

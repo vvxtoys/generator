@@ -1,5 +1,5 @@
 /**
- *    Copyright 2006-2019 the original author or authors.
+ *    Copyright 2006-2020 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -924,7 +924,7 @@ public class ExampleGenerator extends AbstractJavaGenerator {
             String nameFragment, String operator, boolean isNumber) {
         String tableName = null;
         String associate = introspectedTable.getTableConfiguration().getProperty(PropertyRegistry.TABLE_ASSOCIATE);
-        if (!StringUtils.isNullOrEmpty(associate) && Boolean.valueOf(associate)) {
+        if (!StringUtils.isNullOrEmpty(associate) && Boolean.parseBoolean(associate)) {
             tableName = introspectedTable.getTableConfiguration().getTableName();
         }
         StringBuilder sb = new StringBuilder();
@@ -983,7 +983,7 @@ public class ExampleGenerator extends AbstractJavaGenerator {
             IntrospectedColumn introspectedColumn, boolean betweenMethod) {
         String tableName = null;
         String associate = introspectedTable.getTableConfiguration().getProperty(PropertyRegistry.TABLE_ASSOCIATE);
-        if (!StringUtils.isNullOrEmpty(associate) && Boolean.valueOf(associate)) {
+        if (!StringUtils.isNullOrEmpty(associate) && Boolean.parseBoolean(associate)) {
             tableName = introspectedTable.getTableConfiguration().getTableName();
         }
         StringBuilder sb = new StringBuilder();
@@ -1050,7 +1050,7 @@ public class ExampleGenerator extends AbstractJavaGenerator {
             boolean inMethod) {
         String tableName = null;
         String associate = introspectedTable.getTableConfiguration().getProperty(PropertyRegistry.TABLE_ASSOCIATE);
-        if (!StringUtils.isNullOrEmpty(associate) && Boolean.valueOf(associate)) {
+        if (!StringUtils.isNullOrEmpty(associate) && Boolean.parseBoolean(associate)) {
             tableName = introspectedTable.getTableConfiguration().getTableName();
         }
         StringBuilder sb = new StringBuilder();
@@ -1113,7 +1113,7 @@ public class ExampleGenerator extends AbstractJavaGenerator {
             String nameFragment, String operator) {
         String tableName = null;
         String associate = introspectedTable.getTableConfiguration().getProperty(PropertyRegistry.TABLE_ASSOCIATE);
-        if (!StringUtils.isNullOrEmpty(associate) && Boolean.valueOf(associate)) {
+        if (!StringUtils.isNullOrEmpty(associate) && Boolean.parseBoolean(associate)) {
             tableName = introspectedTable.getTableConfiguration().getTableName();
         }
         StringBuilder sb = new StringBuilder();

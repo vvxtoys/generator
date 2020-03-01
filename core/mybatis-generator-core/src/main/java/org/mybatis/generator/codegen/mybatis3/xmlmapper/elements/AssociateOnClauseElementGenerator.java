@@ -1,3 +1,18 @@
+/**
+ *    Copyright 2006-2020 the original author or authors.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package org.mybatis.generator.codegen.mybatis3.xmlmapper.elements;
 
 import org.mybatis.generator.api.IntrospectedColumn;
@@ -13,13 +28,15 @@ public class AssociateOnClauseElementGenerator extends AbstractXmlElementGenerat
 	public void addElements(XmlElement parentElement) {
 		XmlElement answer = new XmlElement("sql"); //$NON-NLS-1$
 		context.getCommentGenerator().addComment(answer);
+		answer.addAttribute(new Attribute(
+				"id", introspectedTable.getSelectAssociate())); //$NON-NLS-1$
 
 		XmlElement outerForEachElement = new XmlElement("foreach"); //$NON-NLS-1$
 		outerForEachElement.addAttribute(new Attribute(
 				"collection", "associationCriteria")); //$NON-NLS-1$ //$NON-NLS-2$
 		outerForEachElement.addAttribute(new Attribute("item", "criteria")); //$NON-NLS-1$ //$NON-NLS-2$
 		outerForEachElement.addAttribute(new Attribute("separator", "or")); //$NON-NLS-1$ //$NON-NLS-2$
-
+		answer.addElement(outerForEachElement);
 		XmlElement ifElement = new XmlElement("if"); //$NON-NLS-1$
 		ifElement.addAttribute(new Attribute("test", "criteria.valid")); //$NON-NLS-1$ //$NON-NLS-2$
 		outerForEachElement.addElement(ifElement);
@@ -82,13 +99,13 @@ public class AssociateOnClauseElementGenerator extends AbstractXmlElementGenerat
 
 		XmlElement when = new XmlElement("when"); //$NON-NLS-1$
 		when.addAttribute(new Attribute("test", "criterion.noValue")); //$NON-NLS-1$ //$NON-NLS-2$
-		when.addElement(new TextElement("and ${criterion.condition}")); //$NON-NLS-1$
+		when.addElement(new TextElement("${criterion.condition}")); //$NON-NLS-1$
 		chooseElement.addElement(when);
 
 		when = new XmlElement("when"); //$NON-NLS-1$
 		when.addAttribute(new Attribute("test", "criterion.singleValue")); //$NON-NLS-1$ //$NON-NLS-2$
 		sb.setLength(0);
-		sb.append("and ${criterion.condition} #{criterion.value"); //$NON-NLS-1$
+		sb.append("${criterion.condition} #{criterion.value"); //$NON-NLS-1$
 		if (typeHandled) {
 			sb.append(typeHandlerString);
 		}
@@ -99,7 +116,7 @@ public class AssociateOnClauseElementGenerator extends AbstractXmlElementGenerat
 		when = new XmlElement("when"); //$NON-NLS-1$
 		when.addAttribute(new Attribute("test", "criterion.betweenValue")); //$NON-NLS-1$ //$NON-NLS-2$
 		sb.setLength(0);
-		sb.append("and ${criterion.condition} #{criterion.value"); //$NON-NLS-1$
+		sb.append("${criterion.condition} #{criterion.value"); //$NON-NLS-1$
 		if (typeHandled) {
 			sb.append(typeHandlerString);
 		}
@@ -113,7 +130,7 @@ public class AssociateOnClauseElementGenerator extends AbstractXmlElementGenerat
 
 		when = new XmlElement("when"); //$NON-NLS-1$
 		when.addAttribute(new Attribute("test", "criterion.listValue")); //$NON-NLS-1$ //$NON-NLS-2$
-		when.addElement(new TextElement("and ${criterion.condition}")); //$NON-NLS-1$
+		when.addElement(new TextElement("${criterion.condition}")); //$NON-NLS-1$
 		XmlElement innerForEach = new XmlElement("foreach"); //$NON-NLS-1$
 		innerForEach
 				.addAttribute(new Attribute("collection", "criterion.value")); //$NON-NLS-1$ //$NON-NLS-2$

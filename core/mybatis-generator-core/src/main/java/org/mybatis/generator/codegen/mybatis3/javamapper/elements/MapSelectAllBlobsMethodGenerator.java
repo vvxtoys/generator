@@ -1,5 +1,5 @@
 /**
- *    Copyright 2006-2019 the original author or authors.
+ *    Copyright 2006-2020 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -40,18 +40,8 @@ public class MapSelectAllBlobsMethodGenerator extends
         method.setAbstract(true);
 
         FullyQualifiedJavaType returnType = FullyQualifiedJavaType
-                .getNewMapInstance();
-        FullyQualifiedJavaType listType;
-        if (introspectedTable.getRules().generateRecordWithBLOBsClass()) {
-            listType = new FullyQualifiedJavaType(introspectedTable
-                    .getRecordWithBLOBsType());
-        } else {
-            // the blob fields must be rolled up into the base class
-            listType = new FullyQualifiedJavaType(introspectedTable
-                    .getBaseRecordType());
-        }
-
-        importedTypes.add(listType);
+                .getNewListInstance();
+        FullyQualifiedJavaType listType = FullyQualifiedJavaType.getNewMapInstance();
         returnType.addTypeArgument(listType);
         method.setReturnType(returnType);
         method.addParameter(new Parameter(type, "example")); //$NON-NLS-1$

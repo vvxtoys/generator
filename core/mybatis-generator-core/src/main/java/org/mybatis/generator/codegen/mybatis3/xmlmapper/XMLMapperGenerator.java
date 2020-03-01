@@ -1,5 +1,5 @@
 /**
- *    Copyright 2006-2019 the original author or authors.
+ *    Copyright 2006-2020 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -67,7 +67,7 @@ public class XMLMapperGenerator extends AbstractXmlGenerator {
         addUpdateByPrimaryKeyWithoutBLOBsElement(answer);
         // 是否开启cursor功能
         String cursor = introspectedTable.getTableConfiguration().getProperty(PropertyRegistry.TABLE_ENABLE_CURSOR);
-        if (!StringUtils.isNullOrEmpty(cursor) && Boolean.valueOf(cursor)) {
+        if (!StringUtils.isNullOrEmpty(cursor) && Boolean.parseBoolean(cursor)) {
             addSelectAllCursor(answer);
             addSelectAllBlobsCursor(answer);
         }
