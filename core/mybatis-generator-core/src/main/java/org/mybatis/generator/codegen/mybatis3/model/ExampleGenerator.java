@@ -288,13 +288,13 @@ public class ExampleGenerator extends AbstractJavaGenerator {
             method.addParameter(new Parameter(FullyQualifiedJavaType.getStringInstance(), "str")); //$NON-NLS-1$
 
             StringBuilder sb = new StringBuilder();
-            sb.append("String out");
-            sb.append(" = ");
-            sb.append("Arrays.asList(str.split(\",\")).stream().reduce(\"\",(x,y) ->");
-            sb.append("x + tableName + y + \",\"");
+            sb.append("String[] strs = Arrays.asList(str.split(\",\"))");
+            sb.append(".stream().map(s ->");
+            sb.append("s.contains(\".\")?s:tableName.concat(\".\").concat(s))");
+            sb.append(".toArray(String[]::new");
             sb.append(");");
             method.addBodyLine(sb.toString());
-            method.addBodyLine("return out.substring(out.length()-1);");
+            method.addBodyLine("return String.join(\",\", strs);");
             commentGenerator.addGeneralMethodComment(method, introspectedTable);
             topLevelClass.addMethod(method);
         }
