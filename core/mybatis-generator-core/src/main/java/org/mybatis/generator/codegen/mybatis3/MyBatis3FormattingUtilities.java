@@ -15,8 +15,8 @@
  */
 package org.mybatis.generator.codegen.mybatis3;
 
-import com.mysql.jdbc.StringUtils;
 import org.mybatis.generator.api.IntrospectedColumn;
+import org.mybatis.generator.internal.util.StringUtility;
 
 import static org.mybatis.generator.internal.util.StringUtility.escapeStringForJava;
 import static org.mybatis.generator.internal.util.StringUtility.stringHasValue;
@@ -82,7 +82,7 @@ public class MyBatis3FormattingUtilities {
                 sb.append(introspectedColumn.getContext().getEndingDelimiter());
             }
             return sb.toString();
-        } else if (!StringUtils.isNullOrEmpty(tableName)) {
+        } else if (StringUtility.stringHasValue(tableName)) {
             return tableName.concat(".").concat(getEscapedColumnName(introspectedColumn));
         } else {
             return getEscapedColumnName(introspectedColumn);
@@ -142,7 +142,7 @@ public class MyBatis3FormattingUtilities {
             sb.append('.');
         }
 
-        if (!StringUtils.isNullOrEmpty(tableName) && StringUtils.isNullOrEmpty(sb.toString())) {
+        if (StringUtility.stringHasValue(tableName) && !StringUtility.stringHasValue(sb.toString())) {
             sb.append(tableName);
             sb.append(".");
         }

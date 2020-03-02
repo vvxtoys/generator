@@ -15,7 +15,6 @@
  */
 package org.mybatis.generator.codegen.mybatis3.model;
 
-import com.mysql.jdbc.StringUtils;
 import org.mybatis.generator.api.CommentGenerator;
 import org.mybatis.generator.api.FullyQualifiedTable;
 import org.mybatis.generator.api.IntrospectedColumn;
@@ -23,7 +22,6 @@ import org.mybatis.generator.api.dom.OutputUtilities;
 import org.mybatis.generator.api.dom.java.*;
 import org.mybatis.generator.codegen.AbstractJavaGenerator;
 import org.mybatis.generator.codegen.mybatis3.MyBatis3FormattingUtilities;
-import org.mybatis.generator.config.PropertyRegistry;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -45,13 +43,8 @@ public class ExampleGenerator extends AbstractJavaGenerator {
         progressCallback.startTask(getString(
                 "Progress.6", table.toString())); //$NON-NLS-1$
         CommentGenerator commentGenerator = context.getCommentGenerator();
-
-        String associate = introspectedTable.getTableConfiguration().getProperty(PropertyRegistry.TABLE_ASSOCIATE);
-        boolean useAssociate = false;
-        if (!StringUtils.isNullOrEmpty(associate)) {
-            useAssociate = Boolean.parseBoolean(associate);
-        }
-
+        // use associate
+        boolean useAssociate = introspectedTable.getRules().generateAssociateClause();
         FullyQualifiedJavaType type = new FullyQualifiedJavaType(
                 introspectedTable.getExampleType());
         TopLevelClass topLevelClass = new TopLevelClass(type);
@@ -293,21 +286,15 @@ public class ExampleGenerator extends AbstractJavaGenerator {
             method.setVisibility(JavaVisibility.PRIVATE);
             method.setReturnType(FullyQualifiedJavaType.getStringInstance());
             method.addParameter(new Parameter(FullyQualifiedJavaType.getStringInstance(), "str")); //$NON-NLS-1$
-            method.addBodyLine("StringBuilder sb = new StringBuilder();");
-            method.addBodyLine("if (str != null) {");
-            method.addBodyLine("String[] fields = str.split(\",\");");
-            method.addBodyLine("for (String field:fields) {");
-            method.addBodyLine("sb.append(\",\");");
-            method.addBodyLine("if (!field.contains(\".\")) {");
-            method.addBodyLine("sb.append(tableName);");
-            method.addBodyLine("sb.append(\".\");");
-            method.addBodyLine("sb.append(field);");
-            method.addBodyLine("}else {");
-            method.addBodyLine("sb.append(field);");
-            method.addBodyLine("}");
-            method.addBodyLine("}");
-            method.addBodyLine("}");
-            method.addBodyLine("return sb.substring(1);");
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("String out");
+            sb.append(" = ");
+            sb.append("Arrays.asList(str.split(\",\")).stream().reduce(\"\",(x,y) ->");
+            sb.append("x + tableName + y + \",\"");
+            sb.append(");");
+            method.addBodyLine(sb.toString());
+            method.addBodyLine("return out.substring(out.length()-1);");
             commentGenerator.addGeneralMethodComment(method, introspectedTable);
             topLevelClass.addMethod(method);
         }
@@ -839,11 +826,7 @@ public class ExampleGenerator extends AbstractJavaGenerator {
         }
 
         // add customise method
-        boolean useAssociate = false;
-        String associate = introspectedTable.getTableConfiguration().getProperty(PropertyRegistry.TABLE_ASSOCIATE);
-        if (!StringUtils.isNullOrEmpty(associate) && Boolean.parseBoolean(associate)) {
-            useAssociate = true;
-        }
+        boolean useAssociate = introspectedTable.getRules().generateAssociateClause();
         if (useAssociate) {
             answer.addMethod(getEqualConditionMethod(returnType,true));
             answer.addMethod(getEqualConditionMethod(returnType,false));
@@ -923,8 +906,8 @@ public class ExampleGenerator extends AbstractJavaGenerator {
     private Method getSingleValueMethod(IntrospectedColumn introspectedColumn,
             String nameFragment, String operator, boolean isNumber) {
         String tableName = null;
-        String associate = introspectedTable.getTableConfiguration().getProperty(PropertyRegistry.TABLE_ASSOCIATE);
-        if (!StringUtils.isNullOrEmpty(associate) && Boolean.parseBoolean(associate)) {
+        boolean useAssociate = introspectedTable.getRules().generateAssociateClause();
+        if (useAssociate) {
             tableName = introspectedTable.getTableConfiguration().getTableName();
         }
         StringBuilder sb = new StringBuilder();
@@ -982,8 +965,8 @@ public class ExampleGenerator extends AbstractJavaGenerator {
     private Method getSetBetweenOrNotBetweenMethod(
             IntrospectedColumn introspectedColumn, boolean betweenMethod) {
         String tableName = null;
-        String associate = introspectedTable.getTableConfiguration().getProperty(PropertyRegistry.TABLE_ASSOCIATE);
-        if (!StringUtils.isNullOrEmpty(associate) && Boolean.parseBoolean(associate)) {
+        boolean useAssociate = introspectedTable.getRules().generateAssociateClause();
+        if (useAssociate) {
             tableName = introspectedTable.getTableConfiguration().getTableName();
         }
         StringBuilder sb = new StringBuilder();
@@ -1049,8 +1032,8 @@ public class ExampleGenerator extends AbstractJavaGenerator {
     private Method getSetInOrNotInMethod(IntrospectedColumn introspectedColumn,
             boolean inMethod) {
         String tableName = null;
-        String associate = introspectedTable.getTableConfiguration().getProperty(PropertyRegistry.TABLE_ASSOCIATE);
-        if (!StringUtils.isNullOrEmpty(associate) && Boolean.parseBoolean(associate)) {
+        boolean useAssociate = introspectedTable.getRules().generateAssociateClause();
+        if (useAssociate) {
             tableName = introspectedTable.getTableConfiguration().getTableName();
         }
         StringBuilder sb = new StringBuilder();
@@ -1112,8 +1095,8 @@ public class ExampleGenerator extends AbstractJavaGenerator {
     private Method getNoValueMethod(IntrospectedColumn introspectedColumn,
             String nameFragment, String operator) {
         String tableName = null;
-        String associate = introspectedTable.getTableConfiguration().getProperty(PropertyRegistry.TABLE_ASSOCIATE);
-        if (!StringUtils.isNullOrEmpty(associate) && Boolean.parseBoolean(associate)) {
+        boolean useAssociate = introspectedTable.getRules().generateAssociateClause();
+        if (useAssociate) {
             tableName = introspectedTable.getTableConfiguration().getTableName();
         }
         StringBuilder sb = new StringBuilder();

@@ -15,7 +15,6 @@
  */
 package org.mybatis.generator.codegen.mybatis3.javamapper;
 
-import com.mysql.jdbc.StringUtils;
 import org.mybatis.generator.api.CommentGenerator;
 import org.mybatis.generator.api.dom.java.CompilationUnit;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
@@ -84,12 +83,8 @@ public class JavaMapperGenerator extends AbstractJavaClientGenerator {
         addUpdateByPrimaryKeySelectiveMethod(interfaze);
         addUpdateByPrimaryKeyWithBLOBsMethod(interfaze);
         addUpdateByPrimaryKeyWithoutBLOBsMethod(interfaze);
-
-        String cursor = introspectedTable.getTableConfiguration().getProperty(PropertyRegistry.TABLE_ENABLE_CURSOR);
-        if (!StringUtils.isNullOrEmpty(cursor) && Boolean.parseBoolean(cursor)) {
-            addSelectCursorBlobsMethod(interfaze);
-            addSelectCursorMethod(interfaze);
-        }
+        addSelectCursorBlobsMethod(interfaze);
+        addSelectCursorMethod(interfaze);
         addSelectMapMethod(interfaze);
         addSelectMapBlobsMethod(interfaze);
 
@@ -207,14 +202,14 @@ public class JavaMapperGenerator extends AbstractJavaClientGenerator {
     }
 
     protected void addSelectCursorBlobsMethod(Interface interfaze) {
-        if (introspectedTable.getRules().generateSelectByExampleWithBLOBs()) {
+        if (introspectedTable.getRules().generateCursorWithBlobs()) {
             AbstractJavaMapperMethodGenerator methodGenerator = new CursorSelectAllBlobsMethodGenerator();
             initializeAndExecuteGenerator(methodGenerator, interfaze);
         }
     }
 
     protected void addSelectCursorMethod(Interface interfaze) {
-        if (introspectedTable.getRules().generateSelectByExampleWithoutBLOBs()) {
+        if (introspectedTable.getRules().generateCursorWithoutBlobs()) {
             AbstractJavaMapperMethodGenerator methodGenerator = new CursorSelectAllMethodGenerator();
             initializeAndExecuteGenerator(methodGenerator, interfaze);
         }

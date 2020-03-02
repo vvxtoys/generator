@@ -15,13 +15,11 @@
  */
 package org.mybatis.generator.codegen.mybatis3.xmlmapper.elements;
 
-import com.mysql.jdbc.StringUtils;
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.dom.xml.Attribute;
 import org.mybatis.generator.api.dom.xml.TextElement;
 import org.mybatis.generator.api.dom.xml.XmlElement;
 import org.mybatis.generator.codegen.mybatis3.MyBatis3FormattingUtilities;
-import org.mybatis.generator.config.PropertyRegistry;
 
 import java.util.Iterator;
 
@@ -40,9 +38,8 @@ public class BaseColumnListElementGenerator extends AbstractXmlElementGenerator 
 
         context.getCommentGenerator().addComment(answer);
 
-        String associate = introspectedTable.getTableConfiguration().getProperty(PropertyRegistry.TABLE_ASSOCIATE);
         String tableName = null;
-        if (!StringUtils.isNullOrEmpty(associate) && Boolean.parseBoolean(associate)) {
+        if (introspectedTable.getRules().generateAssociateClause()) {
             tableName = introspectedTable.getTableConfiguration().getTableName();
         }
         StringBuilder sb = new StringBuilder();

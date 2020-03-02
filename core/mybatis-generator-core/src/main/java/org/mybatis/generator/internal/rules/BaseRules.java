@@ -1,5 +1,5 @@
 /**
- *    Copyright 2006-2019 the original author or authors.
+ *    Copyright 2006-2020 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -423,6 +423,46 @@ public abstract class BaseRules implements Rules {
         return introspectedTable.hasBLOBColumns()
                 && (tableConfiguration.isSelectByExampleStatementEnabled() || tableConfiguration
                         .isSelectByPrimaryKeyStatementEnabled());
+    }
+
+    @Override
+    public boolean generateCursorWithoutBlobs() {
+        if (isModelOnly) {
+            return false;
+        }
+        if (generateSelectByExampleWithoutBLOBs()) {
+            String cursor = tableConfiguration.getProperty(PropertyRegistry.TABLE_ENABLE_CURSOR);
+            if (StringUtility.stringHasValue(cursor)) {
+                return Boolean.parseBoolean(cursor);
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean generateCursorWithBlobs() {
+        if (isModelOnly) {
+            return false;
+        }
+        if (generateSelectByExampleWithBLOBs()) {
+            String cursor = tableConfiguration.getProperty(PropertyRegistry.TABLE_ENABLE_CURSOR);
+            if (StringUtility.stringHasValue(cursor)) {
+                return Boolean.parseBoolean(cursor);
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean generateAssociateClause() {
+        if (isModelOnly) {
+            return false;
+        }
+        String associate = tableConfiguration.getProperty(PropertyRegistry.TABLE_ASSOCIATE);
+        if (StringUtility.stringHasValue(associate)) {
+            return Boolean.parseBoolean(associate);
+        }
+        return false;
     }
 
     @Override
