@@ -297,6 +297,7 @@ public class ExampleGenerator extends AbstractJavaGenerator {
             method.addBodyLine("return String.join(\",\", strs);");
             commentGenerator.addGeneralMethodComment(method, introspectedTable);
             topLevelClass.addMethod(method);
+            topLevelClass.addImportedType(new FullyQualifiedJavaType("java.util.Arrays"));
         }
 
         // now generate the inner class that holds the AND conditions
@@ -1417,15 +1418,15 @@ public class ExampleGenerator extends AbstractJavaGenerator {
     }
 
     private Method getLeftJoinMethod() {
-        return getJoinMethod("LeftJoin","left join");
+        return getJoinMethod("LeftJoin","left join ");
     }
 
     private Method getRightJoinMethod() {
-        return getJoinMethod("RightJoin","right join");
+        return getJoinMethod("RightJoin","right join ");
     }
 
     private Method getInnerJoinMethod() {
-        return getJoinMethod("InnerJoin","inner join");
+        return getJoinMethod("InnerJoin","inner join ");
     }
 
     private Method getJoinMethod(String suffix, String operator) {
@@ -1500,7 +1501,7 @@ public class ExampleGenerator extends AbstractJavaGenerator {
         method.addBodyLine("if (onCondition) {");
         method.addBodyLine("onCondition = false;");
         sb.append("addCriterion(\"");
-        sb.append("on");
+        sb.append("on ");
         sb.append("\" + ");
         sb.append("tableName1");
         sb.append(" + ");
@@ -1518,7 +1519,7 @@ public class ExampleGenerator extends AbstractJavaGenerator {
         method.addBodyLine("}else {");
         sb.setLength(0);
         sb.append("addCriterion(\"");
-        sb.append("and");
+        sb.append("and ");
         sb.append("\" + ");
         sb.append("tableName1");
         sb.append(" + ");
